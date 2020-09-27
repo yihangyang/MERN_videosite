@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react'
 import { Typography, Button, Form, message, Input, Icon } from 'antd';
 import Dropzone from 'react-dropzone';
 import axios from 'axios';
+import { useSelector } from 'react-redux'
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -19,36 +20,66 @@ const Catogory = [
   { value: 4, label: "Sports" },
 ]
 
-function UploadVideoPage() {
+function UploadVideoPage(props) {
+  const user = useSelector(state => state.user)
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [privacy, setPrivacy] = useState(0)
   const [categories, setCategories] = useState("Film & Animation")
-  const [filePath, setFilePath] = useState("")
+  const [filepath, setFilepath] = useState("")
   const [duration, setDuration] = useState("")
   const [thumbnail, setThumbnail] = useState("")
 
 
   const handleChangeTitle = ( event ) => {
-      setTitle(event.currentTarget.value)
+    setTitle(event.currentTarget.value)
   }
 
   const handleChangeDecsription = (event) => {
-
-      setDescription(event.currentTarget.value)
+    setDescription(event.currentTarget.value)
   }
 
   const handleChangePrivacy = (event) => {
-      setPrivacy(event.currentTarget.value)
+    setPrivacy(event.currentTarget.value)
   }
 
   const handleChangeCategory = (event) => {
-      setCategories(event.currentTarget.value)
+    setCategories(event.currentTarget.value)
   }
 
-  const onSubmit = () => {
-      
+  const onSubmit = (e) => {
+    e.preventDefault()
+
+    if (user.userData && !user.userData.isAuth) {
+      alert("Please log in first")
+    }
+
+    if (title === "" || description === "" ||
+        categories === "" || filepath === "" ||
+        duration === "" || thumbnail === "") {
+          return alert("Please fill all fields first")
+        }
+
+    const variables = {
+      writer: user.userData._id,
+      title: title,
+      description: description,
+      privacy: privacy,
+      filepath: filepath,
+      category: categories,
+      duration: duration,
+      thumbnail: thumbnail,
+    }
+    axios.post('/api/video/uploadVideo', variables)
+      .then(res => {
+        if(res.data.success) {
+          alert("Video Uploaded Successfully")
+          props.history.push('/')
+        } else {
+          alert('failed to upload video')
+        }
+      })
   }
 
   const onDrop = ( files ) => {
@@ -64,7 +95,7 @@ function UploadVideoPage() {
             filepath: res.data.filepath,
             filename: res.data.filename
           }
-          setFilePath(res.data.filepath)
+          setFilepath(res.data.filepath)
 
           // generate thumbnail with thid filepath
           axios.post('/api/video/thumbnail', variable)
