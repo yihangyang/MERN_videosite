@@ -8,7 +8,7 @@ function SideVideo() {
     axios.get('/api/video/getVideos')
       .then(res => {
         if(res.data.success) {
-          console.log(res.data)
+          // console.log(res.data)
           setSideVideos(res.data.videos)
         } else {
           alert("Failed to get Videos")
@@ -21,7 +21,7 @@ function SideVideo() {
     var seconds = Math.floor(video.duration - minutes * 60)
 
     return (
-      <div style={{ display: 'flex', marginTop: '1rem', padding: '0 2rem'}}>
+      <div key={video._id} style={{ display: 'flex', marginTop: '1rem', padding: '0 2rem'}}>
         <div style={{ width: '40%', marginRight: '1rem' }}>
           <a href={`/video/${video._id}`}>
             <img style={{ width: '100%'}} src={`http://localhost:5000/${video.thumbnail}`} alt="thumbnail" />
