@@ -47,7 +47,6 @@ function Subscribe(props) {
 
     axios.post('/api/subscribe/subscribeNumber', subscribeNumberVariables)
       .then(res => {
-        console.log()
         if (res.data.success) {
           // console.log(res.data)
           setSubscribeNumber(res.data.subscribeNumber)

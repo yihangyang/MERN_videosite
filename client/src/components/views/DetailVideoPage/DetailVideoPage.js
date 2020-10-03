@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react'
 
 import SideVideo from './Sections/SideVideo'
 import Subscribe from './Sections/Subscribe'
+import Comments from './Sections/Comments'
 
 function DetailVideoPage(props) {
 
   const videoId = props.match.params.videoId
   const [video, setVideo] = useState([])
+  const [commentList, setCommentList] = useState([])
 
   const videoVariable =  {
     videoId
@@ -23,7 +25,20 @@ function DetailVideoPage(props) {
           alert('Failed to get video')
         }
       })
+    
+    axios.post('/api/comment/getComments', videoVariable)
+      .then(res => {
+        if (res.data.success) {
+          setCommentList(res.data.comments)
+        } else {
+          alert('Failed to get video')
+        }
+      })
   }, [])
+
+  const updateComment = (newComment) => {
+    setCommentList(commentList.concat(newComment))
+  }
 
   if (video.writer) {
     return (
@@ -43,6 +58,8 @@ function DetailVideoPage(props) {
                 />
                 <div></div>
               </List.Item>
+              <Comments commentList={commentList} postId={video._id} refreshFunction={updateComment}/>
+              
             </div>
           </div>
         </Col>

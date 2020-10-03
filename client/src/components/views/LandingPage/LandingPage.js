@@ -14,7 +14,6 @@ function LandingPage() {
     axios.get('/api/video/getVideos')
       .then(res => {
         if(res.data.success) {
-          console.log(res.data)
           setVideos(res.data.videos)
         } else {
           alert("Failed to get Videos")
