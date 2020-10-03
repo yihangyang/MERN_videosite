@@ -9,6 +9,9 @@ const { auth } = require("../middleware/auth");
 //             Subscribe
 //=================================
 
+router.get("/test", (req, res) => {
+  res.status(200).json({ success: true, test: 'worked'})
+})
 
 // check the subscribeNumber we have
 router.post("/subscribeNumber", (req, res) => {

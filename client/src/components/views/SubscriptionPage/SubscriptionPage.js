@@ -16,7 +16,6 @@ function SubscriptionPage() {
     axios.post('/api/video/getSubscriptionVideos', variables)
       .then(res => {
         if(res.data.success) {
-          console.log(res.data)
           setVideos(res.data.videos)
         } else {
           alert("Failed to get subscription videos")
@@ -58,7 +57,7 @@ function SubscriptionPage() {
   })
   return (
     <div style={{ width: '85%', margin: "3rem auto"}}>
-      <Title level={2}> Videos </Title>
+      <Title level={2}> Subscribed Videos </Title>
       <hr />
       <Row>
         { renderCard }
