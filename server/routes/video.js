@@ -4,7 +4,7 @@ const multer = require('multer')
 var ffmpeg = require('fluent-ffmpeg')
 
 const { Video } = require("../models/Video");
-
+const { Subscriber } = require('../models/Subscriber')
 const { auth } = require("../middleware/auth");
 
 var storage = multer.diskStorage({
@@ -94,9 +94,30 @@ router.post("/getVideo", (req, res) => {
     .populate('writer')
     .exec((err, video) => {
       if(err) return res.status(400).send(err)
-      res.status(200).json({ success: true, video})
+      res.status(200).json({ success: true, video })
     })
 });
 
+router.post("/getSubscriptionVideos", (req, res) => {
+  Subscriber.find({ 'userFrom': req.body.userFrom })
+  .exec((err, subscribers) => {
+    // find all user i am subscribing
+    if(err) return res.status(400).send(err)
+
+    let subscribedUser = []
+
+    subscribers.map((subscriber, i) => {
+      subscribedUser.push(subscriber.userTo)
+    })
+
+    // find all videos in every my subscribed user
+    Video.find({ writer: { '$in': subscribedUser }})
+      .populate('writer')
+      .exec((err, videos) => {
+        if (err) return res.status(400).send(err)
+        res.status(200).json({ success: true, videos })
+      })
+  })
+});
 
 module.exports = router;
