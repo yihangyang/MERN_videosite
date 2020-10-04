@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import SideVideo from './Sections/SideVideo'
 import Subscribe from './Sections/Subscribe'
 import Comments from './Sections/Comments'
+import LikeDislikes from './Sections/LikeDislikes'
 
 function DetailVideoPage(props) {
 
@@ -49,7 +50,10 @@ function DetailVideoPage(props) {
               <video style={{ width: '100%' }} src={`http://localhost:5000/${video.filepath}`} controls />
   
               <List.Item
-                actions={[ <Subscribe userTo={video.writer._id} userFrom={localStorage.getItem('userId')} /> ]}
+                actions={[
+                  <LikeDislikes video videoId={videoId} userId={localStorage.getItem('userId')} />,
+                  <Subscribe userTo={video.writer._id} userFrom={localStorage.getItem('userId')} />,
+                ]}
               >
                 <List.Item.Meta
                   avatar={<Avatar src={video.writer && video.writer.image} />}
