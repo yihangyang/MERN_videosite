@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import { Button, Input } from 'antd'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { pushComment } from '../../../../_actions/comment_actions'
+
 import SingleComment from './SingleComment'
 import ReplyComment from './ReplyComment'
-import axios from 'axios'
 const { TextArea } = Input
 
 function Comments(props) {
-
+  const dispatch = useDispatch();
   const user = useSelector(state => state.user)
+
   const [comment, setComment] = useState('')
 
   const handleChange = (e) => {
@@ -23,11 +25,12 @@ function Comments(props) {
       writer: user.userData._id,
       postId: props.postId
     }
-    axios.post('/api/comment/pushComment', variables)
+
+    dispatch(pushComment(variables))
       .then(res => {
-        if(res.data.success) {
+        if(res.payload.success) {
           setComment('')
-          props.refreshFunction(res.data.result)
+          props.refreshFunction(res.payload.result)
         } else {
           alert('Failed to push comment')
         }
@@ -50,17 +53,22 @@ function Comments(props) {
       ))}
 
       {/* Root Comment Form */}
-      <form style={{ display: 'flex' }} onSubmit={onSubmit}>
-        <TextArea
-          style={{ width: '100%', borderRadius:'5px'}}
-          onChange={handleChange}
-          value={comment}
-          placeholder='write sth...'
-        />
-        <br />
-        <Button style={{ width: '20%', height: '52px'}} onClick={onSubmit}>Submit</Button>
+      { (user.userData && !user.userData.isAuth) ? (
+        <div>Wanna say something? <a href='/login'>login</a> or <a href='/register'>register</a></div>
+      ) : (
+        <form style={{ display: 'flex' }} onSubmit={onSubmit}>
+          <TextArea
+            style={{ width: '100%', borderRadius:'5px'}}
+            onChange={handleChange}
+            value={comment}
+            placeholder='write sth...'
+          />
+          <br />
+          <Button style={{ width: '20%', height: '52px'}} onClick={onSubmit}>Submit</Button>
 
-      </form>
+        </form>
+      )}
+      
     </div>
   )
 }

@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Avatar, Col, Typography, Row} from 'antd'
-import axios from 'axios'
+import { useDispatch } from "react-redux";
+import { getVideos } from '../../../_actions/video_actions'
 import moment from 'moment'
 
 const { Title } = Typography
 const { Meta } = Card
 
 function LandingPage() {
+  const dispatch = useDispatch();
 
   const [videos, setVideos] = useState([])
 
   useEffect(() => {
-    axios.get('/api/video/getVideos')
+    dispatch(getVideos())
+    // axios.get('/api/video/getVideos')
       .then(res => {
-        if(res.data.success) {
-          setVideos(res.data.videos)
+        if(res.payload.success) {
+          setVideos(res.payload.videos)
         } else {
           alert("Failed to get Videos")
         }

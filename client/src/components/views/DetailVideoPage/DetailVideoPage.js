@@ -1,6 +1,8 @@
-import { Avatar, List, Typography, Row, Col } from 'antd'
-import axios from 'axios'
+import { Avatar, List, Row, Col } from 'antd'
 import React, { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from "react-redux";
+import { getVideo } from "../../../_actions/video_actions";
+import { getComments } from "../../../_actions/comment_actions";
 
 import SideVideo from './Sections/SideVideo'
 import Subscribe from './Sections/Subscribe'
@@ -8,6 +10,8 @@ import Comments from './Sections/Comments'
 import LikeDislikes from './Sections/LikeDislikes'
 
 function DetailVideoPage(props) {
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.user)
 
   const videoId = props.match.params.videoId
   const [video, setVideo] = useState([])
@@ -18,19 +22,18 @@ function DetailVideoPage(props) {
   }
 
   useEffect(() => {
-    axios.post('/api/video/getVideo', videoVariable)
+    dispatch(getVideo(videoVariable))
       .then(res => {
-        if (res.data.success) {
-          setVideo(res.data.video)
+        if (res.payload.success) {
+          setVideo(res.payload.video)
         } else {
           alert('Failed to get video')
         }
       })
-    
-    axios.post('/api/comment/getComments', videoVariable)
+    dispatch(getComments(videoVariable))
       .then(res => {
-        if (res.data.success) {
-          setCommentList(res.data.comments)
+        if (res.payload.success) {
+          setCommentList(res.payload.comments)
         } else {
           alert('Failed to get video')
         }
